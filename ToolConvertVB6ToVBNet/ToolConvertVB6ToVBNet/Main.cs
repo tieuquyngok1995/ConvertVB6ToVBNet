@@ -18,7 +18,12 @@ namespace ToolConvertVB6ToVBNet
 
         private string[] lstFind;
 
-        readonly string VB_TEXTBOX = "VB.TextBox";
+        private static readonly string VB_TEXTBOX = "VB.TextBox";
+        private static readonly string VB_FRM = ".frm";
+        private static readonly string VB_FRM_BK = ".frm-bk";
+        private static readonly string VB_VBP = ".vbp";
+        private static readonly string VB_VBP_BK = ".vbp-bk";
+        private static readonly string OBJ_OCX = ".ocx";
 
         public Main()
         {
@@ -129,9 +134,9 @@ namespace ToolConvertVB6ToVBNet
                         File.SetAttributes(file, FileAttributes.Normal);
 
                         string fileBk = String.Empty;
-                        if (file.LastIndexOf(".frm") != -1 && file.LastIndexOf(".frm-bk") == -1)
+                        if (file.LastIndexOf(VB_FRM) != -1 && file.LastIndexOf(VB_FRM_BK) == -1)
                         {
-                            fileBk = file.Replace(".frm", ".frm-bk");
+                            fileBk = file.Replace(VB_FRM, VB_FRM_BK);
                             if (File.Exists(fileBk))
                             {
                                 File.SetAttributes(fileBk, FileAttributes.Normal);
@@ -141,9 +146,9 @@ namespace ToolConvertVB6ToVBNet
 
                             readFileAndChange(file, 0);
                         }
-                        if (file.LastIndexOf(".vbp") != -1 && file.LastIndexOf(".vbp-bk") == -1)
+                        if (file.LastIndexOf(VB_VBP) != -1 && file.LastIndexOf(VB_VBP) == -1)
                         {
-                            fileBk = file.Replace(".vbp", ".vbp-bk");
+                            fileBk = file.Replace(VB_VBP, VB_VBP_BK);
                             if (File.Exists(fileBk))
                             {
                                 File.SetAttributes(fileBk, FileAttributes.Normal);
@@ -187,7 +192,7 @@ namespace ToolConvertVB6ToVBNet
                     }
                 }
 
-                if (mode == 1 && rows[i].LastIndexOf(".ocx") != -1)
+                if (mode == 1 && rows[i].LastIndexOf(OBJ_OCX) != -1)
                 {
                     rows[i] = "\'" + rows[i];
                 }
@@ -195,11 +200,6 @@ namespace ToolConvertVB6ToVBNet
                 sw.WriteLine(rows[i]);
             }
             sw.Close();
-        }
-
-        private static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove)
-        {
-            return attributes & ~attributesToRemove;
         }
     }
 }
