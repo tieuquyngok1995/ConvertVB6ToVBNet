@@ -3,9 +3,9 @@ D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6To
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\bin\Debug\ToolConvertVB6ToVBNet.pdb
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.csproj.AssemblyReference.cache
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.csproj.SuggestedBindingRedirects.cache
-D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.Form1.resources
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.Properties.Resources.resources
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.csproj.GenerateResource.cache
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.csproj.CoreCompileInputs.cache
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.exe
 D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.pdb
+D:\Project\ASP.NET\Tool\ConvertVB6ToVBNet\ToolConvertVB6ToVBNet\ToolConvertVB6ToVBNet\obj\Debug\ToolConvertVB6ToVBNet.Main.resources

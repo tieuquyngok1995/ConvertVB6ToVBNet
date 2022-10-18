@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace ToolConvertVB6ToVBNet
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
         private string strFullPathSelect;
 
@@ -20,7 +20,7 @@ namespace ToolConvertVB6ToVBNet
 
         readonly string VB_TEXTBOX = "VB.TextBox";
 
-        public Form1()
+        public Main()
         {
             InitializeComponent();
 
@@ -52,7 +52,8 @@ namespace ToolConvertVB6ToVBNet
             progressBarLoadDir.Maximum = Directory.GetFiles(Dir, "*.*", SearchOption.AllDirectories).Length + Directory.GetDirectories(Dir, "**", SearchOption.AllDirectories).Length;
             TreeNode tds = treeViewDir.Nodes.Add(di.Name);
             tds.Tag = di.FullName;
-            tds.StateImageIndex = 0;
+            tds.ImageIndex = 0;
+            tds.SelectedImageIndex = 0;
             LoadFiles(Dir, tds);
             LoadSubDirectories(Dir, tds);
         }
@@ -66,7 +67,8 @@ namespace ToolConvertVB6ToVBNet
                 FileInfo fi = new FileInfo(file);
                 TreeNode tds = td.Nodes.Add(fi.Name);
                 tds.Tag = fi.FullName;
-                tds.StateImageIndex = 1;
+                tds.ImageIndex = 1;
+                tds.SelectedImageIndex = 1;
                 UpdateProgress();
             }
         }
@@ -80,14 +82,15 @@ namespace ToolConvertVB6ToVBNet
             {
                 DirectoryInfo di = new DirectoryInfo(subdirectory);
                 TreeNode tds = td.Nodes.Add(di.Name);
-                tds.StateImageIndex = 0;
                 tds.Tag = di.FullName;
+                tds.ImageIndex = 0;
+                tds.SelectedImageIndex = 0;
                 LoadFiles(subdirectory, tds);
                 LoadSubDirectories(subdirectory, tds);
                 UpdateProgress();
             }
         }
-
+          
         private void UpdateProgress()
         {
             if (progressBarLoadDir.Value < progressBarLoadDir.Maximum)
@@ -99,7 +102,7 @@ namespace ToolConvertVB6ToVBNet
             }
         }
 
-        private void treeViewDir_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void treeViewDir_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (!e.Node.Text.Contains("."))
             {
@@ -118,7 +121,7 @@ namespace ToolConvertVB6ToVBNet
                     progressBarLoadDir.Value = 0;
 
                     //Setting ProgressBar Maximum Value
-                    progressBarLoadDir.Maximum = Directory.GetFiles(strFullPathSelect, "*.*", SearchOption.AllDirectories).Length + Directory.GetDirectories(strFullPathSelect, "**", SearchOption.AllDirectories).Length;
+                    progressBarLoadDir.Maximum = Directory.GetFiles(strFullPathSelect, "*.*", SearchOption.AllDirectories).Length;
 
                     string[] Files = Directory.GetFiles(strFullPathSelect, "*.*");
                     foreach (string file in Files)
@@ -148,6 +151,8 @@ namespace ToolConvertVB6ToVBNet
                         }
                         UpdateProgress();
                     }
+
+                    progressBarLoadDir.Value = progressBarLoadDir.Maximum;
                 }
             }
             catch (IOException io)
