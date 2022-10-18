@@ -126,12 +126,15 @@ namespace ToolConvertVB6ToVBNet
                     string[] Files = Directory.GetFiles(strFullPathSelect, "*.*");
                     foreach (string file in Files)
                     {
+                        File.SetAttributes(file, FileAttributes.Normal);
+
                         string fileBk = String.Empty;
                         if (file.LastIndexOf(".frm") != -1 && file.LastIndexOf(".frm-bk") == -1)
                         {
                             fileBk = file.Replace(".frm", ".frm-bk");
                             if (File.Exists(fileBk))
                             {
+                                File.SetAttributes(fileBk, FileAttributes.Normal);
                                 File.Delete(fileBk);
                             }
                             File.Copy(file, fileBk);
@@ -143,6 +146,7 @@ namespace ToolConvertVB6ToVBNet
                             fileBk = file.Replace(".vbp", ".vbp-bk");
                             if (File.Exists(fileBk))
                             {
+                                File.SetAttributes(fileBk, FileAttributes.Normal);
                                 File.Delete(fileBk);
                             }
                             File.Copy(file, fileBk);
@@ -158,6 +162,10 @@ namespace ToolConvertVB6ToVBNet
             catch (IOException io)
             {
                 MessageBox.Show("Conver is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Conver is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
             }
         }
 
@@ -187,6 +195,11 @@ namespace ToolConvertVB6ToVBNet
                 sw.WriteLine(rows[i]);
             }
             sw.Close();
+        }
+
+        private static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove)
+        {
+            return attributes & ~attributesToRemove;
         }
     }
 }
