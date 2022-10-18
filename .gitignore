@@ -1,6 +1,4 @@
-
-ToolConvertVB6ToVBNet/.vs/
-ToolConvertVB6ToVBNet/.vs/**
-ToolConvertVB6ToVBNet/.vs/ToolConvertVB6ToVBNet/*
-ToolConvertVB6ToVBNet/ToolConvertVB6ToVBNet/obj/
+ToolConvertVB6ToVBNet/.vs/*
+ToolConvertVB6ToVBNet/ToolConvertVB6ToVBNet/obj/*
+ToolConvertVB6ToVBNet/ToolConvertVB6ToVBNet/bin/*
 */.suo
