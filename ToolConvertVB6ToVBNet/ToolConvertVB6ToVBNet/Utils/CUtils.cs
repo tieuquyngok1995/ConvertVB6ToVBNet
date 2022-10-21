@@ -9,6 +9,12 @@ namespace ToolConvertVB6ToVBNet.Utils
     public static class CUtils
     {
         #region Create Template
+        /// <summary>
+        /// Create item textbox backup value in tag item
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public static string createItemBK(string name, string tag)
         {
             StringBuilder sb = new StringBuilder();
@@ -23,7 +29,21 @@ namespace ToolConvertVB6ToVBNet.Utils
             return string.Format(sb.ToString(), name, tag);
         }
 
+        /// <summary>
+        /// Add property backup in to item
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string addPropertyVBNetDesign(string name, string value)
+        {
+            if (value.Contains(CONST.STR_QUOTATION_MARKS_CHANGE)) value = value.Replace(CONST.STR_QUOTATION_MARKS_CHANGE, CONST.STR_QUOTATION_MARKS);
 
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Me.{0}.{1}\r\n");
+
+            return string.Format(sb.ToString(), name, value);
+        }
         #endregion
 
     }

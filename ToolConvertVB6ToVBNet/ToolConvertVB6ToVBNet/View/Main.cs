@@ -287,8 +287,9 @@ namespace ToolConvertVB6ToVBNet
         {
             int mode = -1;
             Dictionary<string, string> dicItemVB6 = new Dictionary<string, string>();
-            Dictionary<string, List<string>> dicItemVB6Bk = new Dictionary<string, List<string>>();
             Dictionary<string, string> dicItemVBNet = new Dictionary<string, string>();
+            Dictionary<string, List<string>> dicItemVBNetBk = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dicItemVBNetRe = new Dictionary<string, List<string>>();
             Dictionary<string, string> dicFunVBNet = new Dictionary<string, string>();
 
             // Read file
@@ -303,9 +304,10 @@ namespace ToolConvertVB6ToVBNet
                 if (string.IsNullOrEmpty(row)) continue;
 
                 if (row.Equals(CONST.ITEM_VB6)) { mode = 0; continue; }
-                else if (row.Equals(CONST.ITEM_VB6_BK)) { mode = 1; continue; }
-                else if (row.Equals(CONST.ITEM_VBNET)) { mode = 2; continue; }
-                else if (row.Equals(CONST.FUNC_VBNET)) { mode = 3; continue; }
+                else if (row.Equals(CONST.ITEM_VBNET)) { mode = 1; continue; }
+                else if (row.Equals(CONST.ITEM_VBNET_BK)) { mode = 2; continue; }
+                else if (row.Equals(CONST.ITEM_VBNET_RE)) { mode = 3; continue; }
+                else if (row.Equals(CONST.FUNC_VBNET)) { mode = 4; continue; }
 
                 string[] arrRow = row.Split(CONST.CHAR_EQUALS);
                 if (mode == 0 && arrRow.Length == 2)
@@ -314,21 +316,26 @@ namespace ToolConvertVB6ToVBNet
                 }
                 else if (mode == 1 && arrRow.Length == 2)
                 {
-                    dicItemVB6Bk.Add(arrRow[0], arrRow[1].Split(CONST.CHAR_COMMA).ToList());
+                    dicItemVBNet.Add(arrRow[0], arrRow[1]);
                 }
                 else if (mode == 2 && arrRow.Length == 2)
                 {
-                    dicItemVBNet.Add(arrRow[0], arrRow[1]);
+                    dicItemVBNetBk.Add(arrRow[0], arrRow[1].Split(CONST.CHAR_COMMA).ToList());
                 }
                 else if (mode == 3 && arrRow.Length == 2)
+                {
+                    dicItemVBNetRe.Add(arrRow[0], arrRow[1].Split(CONST.CHAR_COMMA).ToList());
+                }
+                else if (mode == 4 && arrRow.Length == 2)
                 {
                     dicFunVBNet.Add(arrRow[0], arrRow[1]);
                 }
             }
 
             objSetting.dicItemVB6 = dicItemVB6;
-            objSetting.dicItemVB6Bk = dicItemVB6Bk;
             objSetting.dicItemVBNet = dicItemVBNet;
+            objSetting.dicItemVBNetBk = dicItemVBNetBk;
+            objSetting.dicItemVBNetRemove = dicItemVBNetRe;
             objSetting.dicFunVBNet = dicFunVBNet;
 
             BinarySerialization.WriteToBinaryFile<SettingModel>(objSetting);
@@ -458,7 +465,7 @@ namespace ToolConvertVB6ToVBNet
                 bool isBk = false;
 
                 List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
-                List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVB6Bk.Keys);
+                List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVBNetBk.Keys);
                 List<string> lstItemBk = new List<string>();
 
 
@@ -466,7 +473,7 @@ namespace ToolConvertVB6ToVBNet
                 {
                     string row = rows[i];
 
-                    if (row.Trim().Contains(CONST.STR_BEGIN))
+                    if (row.Trim().Contains(CONST.STR_VB6_BEGIN))
                     {
                         // Change item to TextBox
                         foreach (string item in lstItem)
@@ -492,21 +499,21 @@ namespace ToolConvertVB6ToVBNet
                         continue;
                     }
 
-                    if (isBk && !row.Trim().Equals(CONST.STR_END) && !string.IsNullOrEmpty(row))
+                    if (isBk && !row.Trim().Equals(CONST.STR_VB6_END) && !string.IsNullOrEmpty(row))
                     {
                         string item = row.Split(CONST.CHAR_EQUALS)[0].Trim();
+                        lstItemBk = objSetting.dicItemVBNetBk[nameItemBk];
 
-                        lstItemBk = objSetting.dicItemVB6Bk[nameItemBk];
                         foreach (string itemBk in lstItemBk)
                         {
                             if (item.Equals(itemBk))
                             {
-                                tag += row.Replace(CONST.STR_QUOTATION_MARKS, string.Empty) + CONST.STR_VER_BAR;
+                                tag += row.Replace(CONST.STR_QUOTATION_MARKS, CONST.STR_QUOTATION_MARKS_CHANGE) + CONST.STR_VER_BAR;
                                 break;
                             }
                         }
                     }
-                    else if (isBk && row.Trim().Equals(CONST.STR_END))
+                    else if (isBk && row.Trim().Equals(CONST.STR_VB6_END))
                     {
                         row += CUtils.createItemBK(nameItem, tag.Remove(tag.Length - 1, 1));
 
@@ -548,9 +555,62 @@ namespace ToolConvertVB6ToVBNet
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
             try
             {
+                string lastName = string.Empty;
+
+                List<string> lstItem = new List<string>(objSetting.dicItemVBNet.Keys);
+                List<string> lstItemRe = new List<string>(objSetting.dicItemVBNetRemove.Keys);
+
                 for (int i = 0; i < rows.Length; i++)
                 {
                     string row = rows[i];
+
+                    if ((row.Trim().Contains(CONST.STR_VBNET_W_EVENT) || row.Trim().Contains(CONST.STR_VBNET_ME))
+                        && row.Trim().Contains(CONST.STR_VBNET_SYS_TEXTBOX))
+                    {
+                        foreach (string item in lstItem)
+                        {
+                            if (row.Contains(item))
+                            {
+                                row = row.Replace(CONST.STR_VBNET_SYS_TEXTBOX, objSetting.dicItemVBNet[item]);
+                                break;
+                            }
+                        }
+                        sw.WriteLine(row);
+                        continue;
+                    }
+
+                    // Remove item in dic item remove
+                    if (row.Trim().Contains(CONST.STR_VBNET_ME))
+                    {
+                        foreach (string itemRe in lstItemRe)
+                        {
+                            if (row.Trim().Contains(itemRe) && row.Contains(CONST.STR_DOT + objSetting.dicItemVBNetRemove[itemRe]))
+                            {
+                                row = String.Empty;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Remove and add property bk
+                    if (row.Trim().Contains(CONST.STR_VBNET_ME))
+                    {
+                        string[] arrRow = row.Trim().Split(CONST.CHAR_DOT);
+                        if (arrRow.Length >= 1 && !arrRow[1].Equals(lastName))
+                        {
+                            if (arrRow[1].Equals(lastName + CONST.STR_BK) && !row.Contains(CONST.STR_TAG))
+                            {
+                                row = string.Empty;
+                            } else if (arrRow[1].Equals(lastName + CONST.STR_BK) && row.Contains(CONST.STR_TAG))
+                            {
+                                row = editAndAddItemBKVBNetDesign(lastName, row);
+                            }
+                            else
+                            {
+                                lastName = arrRow[1];
+                            }
+                        }
+                    }
 
                     sw.WriteLine(row);
                 }
@@ -562,6 +622,21 @@ namespace ToolConvertVB6ToVBNet
 
                 sw.Close();
             }
+        }
+
+        private string editAndAddItemBKVBNetDesign(string name, string row)
+        {
+            string result = string.Empty;
+
+            row = row.Remove(0, row.IndexOf(CONST.CHAR_QUOTATION_MARKS)).Replace(CONST.STR_QUOTATION_MARKS, string.Empty);
+            string[] arrRow = row.Trim().Split(CONST.CHAR_VER_BAR);
+
+            foreach(string item in arrRow)
+            {
+                result += CUtils.addPropertyVBNetDesign(name, item.Trim());
+            }
+
+            return result;
         }
         #endregion
 

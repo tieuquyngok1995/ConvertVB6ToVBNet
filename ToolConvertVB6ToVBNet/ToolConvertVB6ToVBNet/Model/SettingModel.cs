@@ -15,9 +15,11 @@ namespace ToolConvertVB6ToVBNet.Model
 
         public Dictionary<string, string> dicItemVB6 { get; set; }
 
-        public Dictionary<string, List<string>> dicItemVB6Bk { get; set; }
-
         public Dictionary<string, string> dicItemVBNet { get; set; }
+
+        public Dictionary<string, List<string>> dicItemVBNetBk { get; set; }
+
+        public Dictionary<string, List<string>> dicItemVBNetRemove { get; set; }
 
         public Dictionary<string, string> dicFunVBNet { get; set; }
 
