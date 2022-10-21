@@ -36,8 +36,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.btnReload = new System.Windows.Forms.Button();
             this.rbChange = new System.Windows.Forms.RadioButton();
             this.rbConvert = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -51,15 +51,16 @@
             this.txtFolderPath = new System.Windows.Forms.TextBox();
             this.btnConvert = new System.Windows.Forms.Button();
             this.progressBarLoadDir = new System.Windows.Forms.ProgressBar();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnReload = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panelFooter.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelTree.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageListTree
@@ -131,6 +132,16 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(399, 67);
             this.panelTop.TabIndex = 9;
+            // 
+            // btnReload
+            // 
+            this.btnReload.Image = ((System.Drawing.Image)(resources.GetObject("btnReload.Image")));
+            this.btnReload.Location = new System.Drawing.Point(364, 34);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(28, 28);
+            this.btnReload.TabIndex = 11;
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
             // rbChange
             // 
@@ -272,15 +283,15 @@
             this.progressBarLoadDir.Size = new System.Drawing.Size(384, 23);
             this.progressBarLoadDir.TabIndex = 4;
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(399, 24);
-            this.menuStrip1.TabIndex = 12;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(399, 24);
+            this.menuStrip.TabIndex = 12;
+            this.menuStrip.Text = "menuStrip";
             // 
             // toolStripMenuItem1
             // 
@@ -295,16 +306,16 @@
             this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
             this.settingToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.settingToolStripMenuItem.Text = "Setting";
+            this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
             // 
-            // btnReload
+            // openFileDialog
             // 
-            this.btnReload.Image = ((System.Drawing.Image)(resources.GetObject("btnReload.Image")));
-            this.btnReload.Location = new System.Drawing.Point(364, 34);
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(28, 28);
-            this.btnReload.TabIndex = 11;
-            this.btnReload.UseVisualStyleBackColor = true;
-            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            this.openFileDialog.DefaultExt = "txt";
+            this.openFileDialog.Filter = "txt files (*.txt)|*.txt";
+            this.openFileDialog.FilterIndex = 2;
+            this.openFileDialog.ReadOnlyChecked = true;
+            this.openFileDialog.RestoreDirectory = true;
+            this.openFileDialog.ShowReadOnly = true;
             // 
             // Main
             // 
@@ -315,9 +326,9 @@
             this.Controls.Add(this.panelFooter);
             this.Controls.Add(this.panelTree);
             this.Controls.Add(this.panelTop);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuStrip;
             this.MaximumSize = new System.Drawing.Size(415, 960);
             this.MinimumSize = new System.Drawing.Size(415, 450);
             this.Name = "Main";
@@ -330,8 +341,8 @@
             this.panelTree.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -344,7 +355,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.RadioButton rbChange;
         private System.Windows.Forms.RadioButton rbConvert;
@@ -359,10 +369,12 @@
         private System.Windows.Forms.TextBox txtFolderPath;
         private System.Windows.Forms.Button btnConvert;
         private System.Windows.Forms.ProgressBar progressBarLoadDir;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
         private System.Windows.Forms.Button btnReload;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -47,6 +49,37 @@ namespace ToolConvertVB6ToVBNet
         }
 
         /// <summary>
+        /// Menu setting event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void settingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult drResult = openFileDialog.ShowDialog();
+            if (drResult == DialogResult.OK)
+            {
+                try
+                {
+                    string path = openFileDialog.FileName;
+                    if (File.Exists(path))
+                    {
+                        File.SetAttributes(path, FileAttributes.Normal);
+
+                        readAndSaveSetting(path);
+                    }
+                }
+                catch (IOException io)
+                {
+                    MessageBox.Show("Read save file setting is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Read save file setting is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
+                }
+            }
+        }
+
+        /// <summary>
         /// Radio Convert Check
         /// </summary>
         /// <param name="sender"></param>
@@ -86,9 +119,11 @@ namespace ToolConvertVB6ToVBNet
         private void btnDirectoryPath_Click(object sender, EventArgs e)
         {
             folderBrowserDialog.SelectedPath = txtDirectoryPath.Text;
+
             DialogResult drResult = folderBrowserDialog.ShowDialog();
             if (drResult == DialogResult.OK)
             {
+                readAndSaveSetting(folderBrowserDialog.SelectedPath);
                 txtDirectoryPath.Text = folderBrowserDialog.SelectedPath;
 
                 objSetting.directoryPath = txtDirectoryPath.Text;
@@ -122,7 +157,8 @@ namespace ToolConvertVB6ToVBNet
             if (Directory.Exists(strFullPathSelect))
             {
                 txtFolderPath.Text = e.Node.Text;
-            } else
+            }
+            else
             {
                 txtFolderPath.Text = string.Empty;
             }
@@ -135,23 +171,13 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="e"></param>
         private void btnConvert_Click(object sender, EventArgs e)
         {
-            try
+            if (mode == 0)
             {
-                if (mode == 0)
-                {
-                    convertVB6ToVBNet();
-                } else
-                {
-                    editVBNet();
-                }
+                convertVB6ToVBNet();
             }
-            catch (IOException io)
+            else
             {
-                MessageBox.Show("Conver is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Conver is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
+                editVBNet();
             }
         }
         #endregion
@@ -252,7 +278,62 @@ namespace ToolConvertVB6ToVBNet
         }
         #endregion
 
-        #region Function edit change file 
+        #region Function edit change file
+        /// <summary>
+        /// Read file setting and save
+        /// </summary>
+        /// <param name="path"></param>
+        private void readAndSaveSetting(string path)
+        {
+            int mode = -1;
+            Dictionary<string, string> dicItemVB6 = new Dictionary<string, string>();
+            Dictionary<string, List<string>> dicItemVB6Bk = new Dictionary<string, List<string>>();
+            Dictionary<string, string> dicItemVBNet = new Dictionary<string, string>();
+            Dictionary<string, string> dicFunVBNet = new Dictionary<string, string>();
+
+            // Read file
+            StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
+            String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
+            sr.Close();
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                string row = rows[i].Trim();
+
+                if (string.IsNullOrEmpty(row)) continue;
+
+                if (row.Equals(CONST.ITEM_VB6)) { mode = 0; continue; }
+                else if (row.Equals(CONST.ITEM_VB6_BK)) { mode = 1; continue; }
+                else if (row.Equals(CONST.ITEM_VBNET)) { mode = 2; continue; }
+                else if (row.Equals(CONST.FUNC_VBNET)) { mode = 3; continue; }
+
+                string[] arrRow = row.Split(CONST.CHAR_EQUALS);
+                if (mode == 0 && arrRow.Length == 2)
+                {
+                    dicItemVB6.Add(arrRow[0], arrRow[1]);
+                }
+                else if (mode == 1 && arrRow.Length == 2)
+                {
+                    dicItemVB6Bk.Add(arrRow[0], arrRow[1].Split(CONST.CHAR_COMMA).ToList());
+                }
+                else if (mode == 2 && arrRow.Length == 2)
+                {
+                    dicItemVBNet.Add(arrRow[0], arrRow[1]);
+                }
+                else if (mode == 3 && arrRow.Length == 2)
+                {
+                    dicFunVBNet.Add(arrRow[0], arrRow[1]);
+                }
+            }
+
+            objSetting.dicItemVB6 = dicItemVB6;
+            objSetting.dicItemVB6Bk = dicItemVB6Bk;
+            objSetting.dicItemVBNet = dicItemVBNet;
+            objSetting.dicFunVBNet = dicFunVBNet;
+
+            BinarySerialization.WriteToBinaryFile<SettingModel>(objSetting);
+        }
+
         /// <summary>
         /// Convert VB6 to VB.Net
         /// </summary>
@@ -304,9 +385,13 @@ namespace ToolConvertVB6ToVBNet
                     progressBarLoadDir.Value = progressBarLoadDir.Maximum;
                 }
             }
-            catch (Exception e)
+            catch (IOException io)
             {
-                throw e;
+                MessageBox.Show("Convert VB6 to VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Convert VB6 to VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
             }
         }
 
@@ -341,23 +426,23 @@ namespace ToolConvertVB6ToVBNet
                     progressBarLoadDir.Value = progressBarLoadDir.Maximum;
                 }
             }
-            catch (Exception e)
+            catch (IOException io)
             {
-                throw e;
+                MessageBox.Show("Edit VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Edit VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
             }
         }
 
         /// <summary>
         /// Read and edit file VB6 From
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="mode"></param>
+        /// <param name="path">path file</param>
+        /// <param name="mode">mode = 0 change file, mode = 1 comment obj .ocx</param>
         private void readAndEditFileVB6(string path, int mode)
         {
-            string nameItem = string.Empty;
-            string tag = string.Empty;
-            bool isBk = false;
-
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
             String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
@@ -367,52 +452,84 @@ namespace ToolConvertVB6ToVBNet
             StreamWriter sw = new StreamWriter(
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
 
-            for (int i = 0; i < rows.Length; i++)
+            try
             {
-                string row = rows[i];
+                string nameItem = string.Empty, nameItemBk = string.Empty, tag = string.Empty;
+                bool isBk = false;
 
-                // Change item to TextBox
-                foreach (string txtFind in CONST.LIST_ITEM)
+                List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
+                List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVB6Bk.Keys);
+                List<string> lstItemBk = new List<string>();
+
+
+                for (int i = 0; i < rows.Length; i++)
                 {
-                    if (mode == 0 && row.Contains(txtFind))
+                    string row = rows[i];
+
+                    if (row.Trim().Contains(CONST.STR_BEGIN))
                     {
-                        if (txtFind.Equals(CONST.LIST_ITEM[1]))
+                        // Change item to TextBox
+                        foreach (string item in lstItem)
                         {
-                            nameItem = rows[i].Remove(0, row.IndexOf(CONST.LIST_ITEM[1]) + CONST.LIST_ITEM[1].Length).Trim();
-                            isBk = true;
+                            if (mode == 0 && row.Contains(item))
+                            {
+                                foreach (string itemBk in lstKeyItemBk)
+                                {
+                                    if (item.Equals(itemBk))
+                                    {
+                                        nameItemBk = itemBk;
+                                        nameItem = row.Remove(0, row.IndexOf(itemBk) + itemBk.Length).Trim();
+                                        isBk = true;
+                                        break;
+                                    }
+                                }
+
+                                row = row.Replace(item, objSetting.dicItemVB6[item]);
+                                break;
+                            }
                         }
-
-                        row = row.Replace(txtFind, CONST.VB_TEXTBOX);
+                        sw.WriteLine(row);
+                        continue;
                     }
-                }
 
-                if (isBk && !row.Trim().Equals(CONST.STR_END) && !string.IsNullOrEmpty(row))
-                {
-                    string item = rows[i].Trim().Split(CONST.CHAR_EQUALS)[0].Trim();
-
-                    if (item.Equals(CONST.STR_DIS_FORMAT) || item.Equals(CONST.STR_MAX_VALUE) || item.Equals(CONST.STR_MIN_VALUE))
+                    if (isBk && !row.Trim().Equals(CONST.STR_END) && !string.IsNullOrEmpty(row))
                     {
-                        tag += row.Trim().Replace(CONST.STR_QUOTATION_MARKS, string.Empty) + CONST.STR_VER_BAR;
+                        string item = row.Split(CONST.CHAR_EQUALS)[0].Trim();
+
+                        lstItemBk = objSetting.dicItemVB6Bk[nameItemBk];
+                        foreach (string itemBk in lstItemBk)
+                        {
+                            if (item.Equals(itemBk))
+                            {
+                                tag += row.Replace(CONST.STR_QUOTATION_MARKS, string.Empty) + CONST.STR_VER_BAR;
+                                break;
+                            }
+                        }
                     }
-                }
-                else if (isBk && row.Trim().Equals(CONST.STR_END))
-                {
-                    row += CUtils.createItemBK(nameItem, tag.Remove(tag.Length - 1, 1));
+                    else if (isBk && row.Trim().Equals(CONST.STR_END))
+                    {
+                        row += CUtils.createItemBK(nameItem, tag.Remove(tag.Length - 1, 1));
 
-                    nameItem = string.Empty;
-                    tag = string.Empty;
-                    isBk = false;
-                }
+                        nameItem = string.Empty;
+                        tag = string.Empty;
+                        isBk = false;
+                    }
 
-                // comment obj OCX
-                if (mode == 1 && rows[i].LastIndexOf(CONST.OBJ_OCX) != -1)
-                {
-                    row = "\'" + row;
-                }
+                    // comment obj OCX
+                    if (mode == 1 && row.LastIndexOf(CONST.OBJ_OCX) != -1)
+                    {
+                        row = "\'" + row;
+                    }
 
-                sw.WriteLine(row);
+                    sw.WriteLine(row);
+                }
+                sw.Close();
             }
-            sw.Close();
+            catch (Exception e)
+            {
+                MessageBox.Show("Read and Edit file VB6 is Exception: " + e.Message, "Error", MessageBoxButtons.OK);
+                sw.Close();
+            }
         }
 
         /// <summary>
@@ -429,15 +546,24 @@ namespace ToolConvertVB6ToVBNet
             // Write file
             StreamWriter sw = new StreamWriter(
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
-
-            for (int i = 0; i < rows.Length; i++)
+            try
             {
-                string row = rows[i];
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    string row = rows[i];
 
-                sw.WriteLine(row);
+                    sw.WriteLine(row);
+                }
+                sw.Close();
             }
-            sw.Close();
+            catch (Exception e)
+            {
+                MessageBox.Show("Read and Edit file VBNet is Exception: " + e.Message, "Error", MessageBoxButtons.OK);
+
+                sw.Close();
+            }
         }
         #endregion
+
     }
 }

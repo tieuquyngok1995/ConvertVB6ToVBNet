@@ -6,26 +6,13 @@ namespace ToolConvertVB6ToVBNet.Utils
     public static class CONST
     {
         public static string FILE_PATH = AppContext.BaseDirectory + @"\Setting.bin";
-        public static string[] LIST_ITEM = new string[]
-        {
-                "imMask7Ctl.imMask","imNumber7Ctl.imNumber","imText6Ctl.imText", "FPSpreadADO.fpSpread",
-                "imText7Ctl.imText", "imTime7Ctl.imTime","imCalendar7Ctl.imCalendar"
-        };
-        public static IDictionary<String, string> numberNames = new Dictionary<String, string>()
-        {
-            {"Imt","MitaniCorp.Base.Controls.CusTextBox" },
-            {"Imn","MitaniCorp.Base.Controls.CusNumber" },
-            {"Imd","MitaniCorp.Base.Controls.EraDate" },
-            {"Imm","MitaniCorp.Base.Controls.CusMask" },
-            {"Imh","MitaniCorp.Base.Controls.CusTime" }
-        };
 
         #region Char 
         public static readonly char CHAR_EQUALS = '=';
+        public static readonly char CHAR_COMMA = ',';
         #endregion
 
         #region String File 
-        public static readonly string VB_TEXTBOX = "VB.TextBox";
 
         public static readonly string VB_FRM = ".frm";
         public static readonly string VB_FRM_BK = ".frm-bk";
@@ -41,10 +28,12 @@ namespace ToolConvertVB6ToVBNet.Utils
         public static readonly string STR_EQUALS = "=";
         public static readonly string STR_QUOTATION_MARKS = "\"";
 
-        public static readonly string STR_DIS_FORMAT = "DisplayFormat";
-        public static readonly string STR_MAX_VALUE = "MaxValue";
-        public static readonly string STR_MIN_VALUE = "MinValue";
+        public static readonly string ITEM_VB6 = "---Item VB6---";
+        public static readonly string ITEM_VB6_BK = "---Item VBNetBk---";
+        public static readonly string ITEM_VBNET = "---Item VBNet---";
+        public static readonly string FUNC_VBNET = "---Func VBNET---";
 
+        public static readonly string STR_BEGIN = "Begin ";
         public static readonly string STR_END = "End";
         #endregion
     }
