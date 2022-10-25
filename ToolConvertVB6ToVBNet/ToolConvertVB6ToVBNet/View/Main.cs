@@ -14,12 +14,12 @@ namespace ToolConvertVB6ToVBNet
 {
     public partial class Main : Form
     {
-        private SettingModel objSetting;
         private int mode;
 
         private string strFullPathSelect;
 
-        TreeNode treeNode;
+        private TreeNode treeNode;
+        private SettingModel objSetting;
 
         public Main()
         {
@@ -437,6 +437,8 @@ namespace ToolConvertVB6ToVBNet
             {
                 if (!string.IsNullOrEmpty(strFullPathSelect))
                 {
+                    StringBuilder sbLog = new StringBuilder();
+
                     // Setting Inital Value of Progress Bar
                     progressBarLoadDir.Value = 0;
 
@@ -451,6 +453,10 @@ namespace ToolConvertVB6ToVBNet
                         if (file.LastIndexOf(CONST.VB_NET_DESIGN) != -1)
                         {
                             readAndEditFileVBNetDesign(file);
+                        }
+                        else if (file.LastIndexOf(CONST.VB_NET_VB) != -1)
+                        {
+                            //readAndEditFileVBNet(file);
                         }
 
                         UpdateProgress();
@@ -489,11 +495,11 @@ namespace ToolConvertVB6ToVBNet
             {
                 string nameItem = string.Empty, nameItemBk = string.Empty, tag = string.Empty;
                 bool isBk = false;
+                int index = 0;
 
                 List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
                 List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVBNetBk.Keys);
                 List<string> lstItemBk = new List<string>();
-
 
                 for (int i = 0; i < rows.Length; i++)
                 {
@@ -527,7 +533,14 @@ namespace ToolConvertVB6ToVBNet
 
                     if (isBk && !row.Trim().Equals(CONST.STR_VB6_END) && !string.IsNullOrEmpty(row))
                     {
-                        string item = row.Split(CONST.CHAR_EQUALS)[0].Trim();
+                        string[] arrItem = row.Split(CONST.CHAR_EQUALS);
+
+                        if (arrItem.Length > 1 && arrItem[0].Trim().Equals(CONST.STR_INDEX))
+                        {
+                            index = int.Parse(arrItem[1].Trim());
+                        }
+
+                        string item = arrItem[0].Trim();
                         lstItemBk = objSetting.dicItemVBNetBk[nameItemBk];
 
                         foreach (string itemBk in lstItemBk)
@@ -541,11 +554,12 @@ namespace ToolConvertVB6ToVBNet
                     }
                     else if (isBk && row.Trim().Equals(CONST.STR_VB6_END))
                     {
-                        row += CUtils.createItemBK(nameItem, tag.Remove(tag.Length - 1, 1));
+                        row += CUtils.createItemBK(nameItem, index, tag.Remove(tag.Length - 1, 1));
 
                         nameItem = string.Empty;
                         tag = string.Empty;
                         isBk = false;
+                        index = 0;
                     }
 
                     // comment obj OCX
@@ -610,6 +624,12 @@ namespace ToolConvertVB6ToVBNet
                         continue;
                     }
 
+                    if(row.Contains(CONST.STR_VBNET_W_EVENT) && row.Contains(CONST.STR_VBNET_SYS_TEXTBOXARR))
+                    {
+                        sw.WriteLine(String.Empty);
+                        continue;
+                    }
+
                     // Remove item in dic item remove
                     if (row.Contains(CONST.STR_VBNET_ME))
                     {
@@ -629,11 +649,14 @@ namespace ToolConvertVB6ToVBNet
                         string[] arrRow = row.Trim().Split(CONST.CHAR_DOT);
                         if (arrRow.Length >= 1 && !arrRow[1].Equals(lastName))
                         {
-                            if (arrRow[1].Equals(lastName + CONST.STR_BK) && !row.Contains(CONST.STR_TAG))
+                            string nameCheck = lastName;
+                            if (nameCheck.LastIndexOf(CONST.STR_UNDERSCORE) > 0) nameCheck = nameCheck.Insert(nameCheck.LastIndexOf(CONST.STR_UNDERSCORE), CONST.STR_BK);
+
+                            if (arrRow[1].Equals(nameCheck) && !row.Contains(CONST.STR_TAG))
                             {
                                 row = string.Empty;
                             }
-                            else if (arrRow[1].Equals(lastName + CONST.STR_BK) && row.Contains(CONST.STR_TAG))
+                            else if (arrRow[1].Equals(nameCheck) && row.Contains(CONST.STR_TAG))
                             {
                                 row = editAndAddItemBKVBNetDesign(lastName, row);
                             }
@@ -643,11 +666,51 @@ namespace ToolConvertVB6ToVBNet
                             }
                         }
 
-                        if (row.Contains(CONST.STR_BK) && (row.Contains(CONST.STR_ADD) || row.Contains(CONST.STR_NEW)))
+                        if (row.Contains(CONST.STR_BK) 
+                            && (row.Contains(CONST.STR_ADD) || row.Contains(CONST.STR_NEW) || 
+                                row.Contains(CONST.STR_VBNET_SYS_COMPONENT) || row.Contains(CONST.STR_SET_INDEX)))
                         {
                             row = string.Empty;
                         }
                     }
+
+                    sw.WriteLine(row);
+                }
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Read and Edit file VBNet Desgin is Exception: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                sw.Close();
+            }
+        }
+
+        /// <summary>
+        /// Read and edit file VB.NET
+        /// </summary>
+        /// <param name="path"></param>
+        private void readAndEditFileVBNet(string path)
+        {
+            string log = string.Empty;
+
+            // Read file
+            StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
+            String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
+            sr.Close();
+
+            File.WriteAllText(path, String.Empty);
+
+            // Write file
+            StreamWriter sw = new StreamWriter(
+                new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
+
+            try
+            {
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    string row = rows[i];
+                    if (row.Contains(CONST.STR_VBNET_UPGRADE_WARNING)) continue;
 
                     sw.WriteLine(row);
                 }
@@ -661,6 +724,17 @@ namespace ToolConvertVB6ToVBNet
             }
         }
 
+        private void writeLog(string path)
+        {
+            path = path.Replace(CONST.VB_NET_VB, CONST.FILE_LOG);
+        }
+
+        /// <summary>
+        /// Edit And Add Item Backup to file VBNetDesign
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private string editAndAddItemBKVBNetDesign(string name, string row)
         {
             string result = string.Empty;
