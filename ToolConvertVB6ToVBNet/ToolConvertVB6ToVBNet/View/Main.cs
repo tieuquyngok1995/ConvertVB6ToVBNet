@@ -19,6 +19,8 @@ namespace ToolConvertVB6ToVBNet
 
         private string strFullPathSelect;
 
+        TreeNode treeNode;
+
         public Main()
         {
             InitializeComponent();
@@ -70,11 +72,11 @@ namespace ToolConvertVB6ToVBNet
                 }
                 catch (IOException io)
                 {
-                    MessageBox.Show("Read save file setting is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+                    MessageBox.Show("Read save file setting is IOException: " + io.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Read save file setting is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
+                    MessageBox.Show("Read save file setting is Exception: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -123,7 +125,6 @@ namespace ToolConvertVB6ToVBNet
             DialogResult drResult = folderBrowserDialog.ShowDialog();
             if (drResult == DialogResult.OK)
             {
-                readAndSaveSetting(folderBrowserDialog.SelectedPath);
                 txtDirectoryPath.Text = folderBrowserDialog.SelectedPath;
 
                 objSetting.directoryPath = txtDirectoryPath.Text;
@@ -141,8 +142,29 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="e"></param>
         private void btnReload_Click(object sender, EventArgs e)
         {
-            // Load Directory
-            LoadDirectory();
+            if (strFullPathSelect.Equals(txtDirectoryPath.Text))
+            {
+                // Load Directory
+                LoadDirectory();
+            }
+            else if (treeNode != null && Directory.Exists(strFullPathSelect))
+            {
+                string dir = strFullPathSelect;
+
+                // Setting Inital Value of Progress Bar
+                progressBarLoadDir.Value = 0;
+
+                treeNode.Nodes.Clear();
+
+                //Setting ProgressBar Maximum Value
+                progressBarLoadDir.Maximum = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Length +
+                    Directory.GetDirectories(dir, "**", SearchOption.AllDirectories).Length;
+
+
+                LoadFiles(dir, treeNode);
+
+                LoadSubDirectories(dir, treeNode);
+            }
         }
 
         /// <summary>
@@ -157,6 +179,7 @@ namespace ToolConvertVB6ToVBNet
             if (Directory.Exists(strFullPathSelect))
             {
                 txtFolderPath.Text = e.Node.Text;
+                treeNode = e.Node;
             }
             else
             {
@@ -179,6 +202,9 @@ namespace ToolConvertVB6ToVBNet
             {
                 editVBNet();
             }
+
+            MessageBox.Show("Convert is done!!!\r\nPlease check the content convert", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         }
         #endregion
 
@@ -271,7 +297,7 @@ namespace ToolConvertVB6ToVBNet
             {
                 progressBarLoadDir.Value++;
                 int percent = (int)(((double)progressBarLoadDir.Value / (double)progressBarLoadDir.Maximum) * 100);
-                progressBarLoadDir.CreateGraphics().DrawString(percent.ToString() + "%", new Font("MS UI Gothic", (float)10, FontStyle.Regular),
+                progressBarLoadDir.CreateGraphics().DrawString(percent.ToString() + "%", new Font("Microsoft Sans Serif", (float)10, FontStyle.Regular),
                     Brushes.Black, new PointF(progressBarLoadDir.Width / 2 - 10, progressBarLoadDir.Height / 2 - 7));
                 Application.DoEvents();
             }
@@ -394,11 +420,11 @@ namespace ToolConvertVB6ToVBNet
             }
             catch (IOException io)
             {
-                MessageBox.Show("Convert VB6 to VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Convert VB6 to VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Convert VB6 to VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Convert VB6 to VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -435,11 +461,11 @@ namespace ToolConvertVB6ToVBNet
             }
             catch (IOException io)
             {
-                MessageBox.Show("Edit VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Edit VB.NET is IOException: " + io.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Edit VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Edit VB.NET is Exception: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -534,7 +560,7 @@ namespace ToolConvertVB6ToVBNet
             }
             catch (Exception e)
             {
-                MessageBox.Show("Read and Edit file VB6 is Exception: " + e.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Read and Edit file VB6 is Exception: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 sw.Close();
             }
         }
@@ -550,6 +576,8 @@ namespace ToolConvertVB6ToVBNet
             String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
             sr.Close();
 
+            File.WriteAllText(path, String.Empty);
+
             // Write file
             StreamWriter sw = new StreamWriter(
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
@@ -559,14 +587,17 @@ namespace ToolConvertVB6ToVBNet
 
                 List<string> lstItem = new List<string>(objSetting.dicItemVBNet.Keys);
                 List<string> lstItemRe = new List<string>(objSetting.dicItemVBNetRemove.Keys);
-
                 for (int i = 0; i < rows.Length; i++)
                 {
                     string row = rows[i];
 
-                    if ((row.Trim().Contains(CONST.STR_VBNET_W_EVENT) || row.Trim().Contains(CONST.STR_VBNET_ME))
-                        && row.Trim().Contains(CONST.STR_VBNET_SYS_TEXTBOX))
+                    if (string.IsNullOrEmpty(row)) continue;
+
+                    if ((row.Contains(CONST.STR_VBNET_W_EVENT) || row.Contains(CONST.STR_VBNET_ME))
+                        && row.Contains(CONST.STR_VBNET_SYS_TEXTBOX))
                     {
+                        if (row.Contains(CONST.STR_BK)) row = string.Empty;
+
                         foreach (string item in lstItem)
                         {
                             if (row.Contains(item))
@@ -580,20 +611,20 @@ namespace ToolConvertVB6ToVBNet
                     }
 
                     // Remove item in dic item remove
-                    if (row.Trim().Contains(CONST.STR_VBNET_ME))
+                    if (row.Contains(CONST.STR_VBNET_ME))
                     {
                         foreach (string itemRe in lstItemRe)
                         {
-                            if (row.Trim().Contains(itemRe) && row.Contains(CONST.STR_DOT + objSetting.dicItemVBNetRemove[itemRe]))
+                            if (row.Contains(itemRe) && row.Contains(CONST.STR_DOT + objSetting.dicItemVBNetRemove[itemRe]))
                             {
-                                row = String.Empty;
+                                row = string.Empty;
                                 break;
                             }
                         }
                     }
 
                     // Remove and add property bk
-                    if (row.Trim().Contains(CONST.STR_VBNET_ME))
+                    if (row.Contains(CONST.STR_VBNET_ME))
                     {
                         string[] arrRow = row.Trim().Split(CONST.CHAR_DOT);
                         if (arrRow.Length >= 1 && !arrRow[1].Equals(lastName))
@@ -601,7 +632,8 @@ namespace ToolConvertVB6ToVBNet
                             if (arrRow[1].Equals(lastName + CONST.STR_BK) && !row.Contains(CONST.STR_TAG))
                             {
                                 row = string.Empty;
-                            } else if (arrRow[1].Equals(lastName + CONST.STR_BK) && row.Contains(CONST.STR_TAG))
+                            }
+                            else if (arrRow[1].Equals(lastName + CONST.STR_BK) && row.Contains(CONST.STR_TAG))
                             {
                                 row = editAndAddItemBKVBNetDesign(lastName, row);
                             }
@@ -609,6 +641,11 @@ namespace ToolConvertVB6ToVBNet
                             {
                                 lastName = arrRow[1];
                             }
+                        }
+
+                        if (row.Contains(CONST.STR_BK) && (row.Contains(CONST.STR_ADD) || row.Contains(CONST.STR_NEW)))
+                        {
+                            row = string.Empty;
                         }
                     }
 
@@ -618,7 +655,7 @@ namespace ToolConvertVB6ToVBNet
             }
             catch (Exception e)
             {
-                MessageBox.Show("Read and Edit file VBNet is Exception: " + e.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show("Read and Edit file VBNet is Exception: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 sw.Close();
             }
@@ -631,12 +668,12 @@ namespace ToolConvertVB6ToVBNet
             row = row.Remove(0, row.IndexOf(CONST.CHAR_QUOTATION_MARKS)).Replace(CONST.STR_QUOTATION_MARKS, string.Empty);
             string[] arrRow = row.Trim().Split(CONST.CHAR_VER_BAR);
 
-            foreach(string item in arrRow)
+            foreach (string item in arrRow)
             {
                 result += CUtils.addPropertyVBNetDesign(name, item.Trim());
             }
 
-            return result;
+            return result.Remove(result.Length - 2, 2);
         }
         #endregion
 
