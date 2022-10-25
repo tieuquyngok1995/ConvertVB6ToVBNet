@@ -128,7 +128,7 @@
             this.panelTop.Controls.Add(this.txtDirectoryPath);
             this.panelTop.Controls.Add(this.btnDirectoryPath);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(0, 24);
+            this.panelTop.Location = new System.Drawing.Point(0, 25);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(399, 67);
             this.panelTop.TabIndex = 9;
@@ -136,7 +136,7 @@
             // btnReload
             // 
             this.btnReload.Image = ((System.Drawing.Image)(resources.GetObject("btnReload.Image")));
-            this.btnReload.Location = new System.Drawing.Point(364, 34);
+            this.btnReload.Location = new System.Drawing.Point(364, 33);
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(28, 28);
             this.btnReload.TabIndex = 11;
@@ -146,10 +146,10 @@
             // rbChange
             // 
             this.rbChange.AutoSize = true;
-            this.rbChange.Font = new System.Drawing.Font("MS UI Gothic", 12F);
+            this.rbChange.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbChange.Location = new System.Drawing.Point(191, 8);
             this.rbChange.Name = "rbChange";
-            this.rbChange.Size = new System.Drawing.Size(131, 20);
+            this.rbChange.Size = new System.Drawing.Size(134, 22);
             this.rbChange.TabIndex = 10;
             this.rbChange.TabStop = true;
             this.rbChange.Text = "Change VB.NET";
@@ -160,10 +160,10 @@
             // 
             this.rbConvert.AutoSize = true;
             this.rbConvert.Checked = true;
-            this.rbConvert.Font = new System.Drawing.Font("MS UI Gothic", 12F);
+            this.rbConvert.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rbConvert.Location = new System.Drawing.Point(55, 8);
             this.rbConvert.Name = "rbConvert";
-            this.rbConvert.Size = new System.Drawing.Size(130, 20);
+            this.rbConvert.Size = new System.Drawing.Size(132, 22);
             this.rbConvert.TabIndex = 9;
             this.rbConvert.TabStop = true;
             this.rbConvert.Text = "VB6 => VB.NET";
@@ -173,36 +173,36 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("MS UI Gothic", 12F);
-            this.label1.Location = new System.Drawing.Point(6, 42);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(6, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 16);
+            this.label1.Size = new System.Drawing.Size(113, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "Select Directory";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("MS UI Gothic", 12F);
-            this.label6.Location = new System.Drawing.Point(6, 10);
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(3, 8);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(43, 16);
+            this.label6.Size = new System.Drawing.Size(46, 18);
             this.label6.TabIndex = 8;
             this.label6.Text = "Mode";
             // 
             // txtDirectoryPath
             // 
             this.txtDirectoryPath.Enabled = false;
-            this.txtDirectoryPath.Font = new System.Drawing.Font("MS UI Gothic", 15F);
+            this.txtDirectoryPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDirectoryPath.Location = new System.Drawing.Point(130, 34);
             this.txtDirectoryPath.Name = "txtDirectoryPath";
-            this.txtDirectoryPath.Size = new System.Drawing.Size(195, 27);
+            this.txtDirectoryPath.Size = new System.Drawing.Size(195, 26);
             this.txtDirectoryPath.TabIndex = 1;
             // 
             // btnDirectoryPath
             // 
             this.btnDirectoryPath.Image = ((System.Drawing.Image)(resources.GetObject("btnDirectoryPath.Image")));
-            this.btnDirectoryPath.Location = new System.Drawing.Point(331, 34);
+            this.btnDirectoryPath.Location = new System.Drawing.Point(331, 33);
             this.btnDirectoryPath.Name = "btnDirectoryPath";
             this.btnDirectoryPath.Size = new System.Drawing.Size(28, 28);
             this.btnDirectoryPath.TabIndex = 2;
@@ -213,9 +213,9 @@
             // 
             this.panelTree.Controls.Add(this.treeViewDir);
             this.panelTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTree.Location = new System.Drawing.Point(0, 91);
+            this.panelTree.Location = new System.Drawing.Point(0, 92);
             this.panelTree.Name = "panelTree";
-            this.panelTree.Size = new System.Drawing.Size(399, 470);
+            this.panelTree.Size = new System.Drawing.Size(399, 469);
             this.panelTree.TabIndex = 10;
             // 
             // treeViewDir
@@ -223,13 +223,13 @@
             this.treeViewDir.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewDir.Font = new System.Drawing.Font("MS UI Gothic", 12F);
+            this.treeViewDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.treeViewDir.ImageIndex = 0;
             this.treeViewDir.ImageList = this.imageListTree;
             this.treeViewDir.Location = new System.Drawing.Point(6, 0);
             this.treeViewDir.Name = "treeViewDir";
             this.treeViewDir.SelectedImageIndex = 0;
-            this.treeViewDir.Size = new System.Drawing.Size(387, 382);
+            this.treeViewDir.Size = new System.Drawing.Size(387, 381);
             this.treeViewDir.TabIndex = 3;
             this.treeViewDir.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewDir_NodeMouseClick);
             // 
@@ -248,39 +248,41 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("MS UI Gothic", 12F);
-            this.label2.Location = new System.Drawing.Point(6, 9);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(6, 7);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 16);
+            this.label2.Size = new System.Drawing.Size(95, 18);
             this.label2.TabIndex = 5;
             this.label2.Text = "Select Folder";
             // 
             // txtFolderPath
             // 
-            this.txtFolderPath.Font = new System.Drawing.Font("MS UI Gothic", 15F);
+            this.txtFolderPath.Enabled = false;
+            this.txtFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFolderPath.Location = new System.Drawing.Point(109, 3);
             this.txtFolderPath.Name = "txtFolderPath";
             this.txtFolderPath.ReadOnly = true;
-            this.txtFolderPath.Size = new System.Drawing.Size(183, 27);
+            this.txtFolderPath.Size = new System.Drawing.Size(183, 26);
             this.txtFolderPath.TabIndex = 6;
             // 
             // btnConvert
             // 
+            this.btnConvert.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnConvert.Image = ((System.Drawing.Image)(resources.GetObject("btnConvert.Image")));
             this.btnConvert.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnConvert.Location = new System.Drawing.Point(300, 3);
+            this.btnConvert.Location = new System.Drawing.Point(300, 2);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(92, 28);
             this.btnConvert.TabIndex = 7;
-            this.btnConvert.Text = "    Convert";
+            this.btnConvert.Text = "  Convert";
             this.btnConvert.UseVisualStyleBackColor = true;
             this.btnConvert.Click += new System.EventHandler(this.btnConvert_Click);
             // 
             // progressBarLoadDir
             // 
-            this.progressBarLoadDir.Location = new System.Drawing.Point(8, 36);
+            this.progressBarLoadDir.Location = new System.Drawing.Point(8, 34);
             this.progressBarLoadDir.Name = "progressBarLoadDir";
-            this.progressBarLoadDir.Size = new System.Drawing.Size(384, 23);
+            this.progressBarLoadDir.Size = new System.Drawing.Size(384, 24);
             this.progressBarLoadDir.TabIndex = 4;
             // 
             // menuStrip
@@ -289,7 +291,7 @@
             this.toolStripMenuItem1});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(399, 24);
+            this.menuStrip.Size = new System.Drawing.Size(399, 25);
             this.menuStrip.TabIndex = 12;
             this.menuStrip.Text = "menuStrip";
             // 
@@ -297,14 +299,15 @@
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingToolStripMenuItem});
+            this.toolStripMenuItem1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(37, 20);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(42, 21);
             this.toolStripMenuItem1.Text = "File";
             // 
             // settingToolStripMenuItem
             // 
             this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-            this.settingToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.settingToolStripMenuItem.Text = "Setting";
             this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
             // 

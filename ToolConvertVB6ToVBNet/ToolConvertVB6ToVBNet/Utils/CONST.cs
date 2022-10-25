@@ -35,6 +35,8 @@ namespace ToolConvertVB6ToVBNet.Utils
 
         public static readonly string STR_BK = "_bk";
         public static readonly string STR_TAG = ".Tag";
+        public static readonly string STR_ADD = ".Add";
+        public static readonly string STR_NEW = "New";
 
         public static readonly string ITEM_VB6 = "---Item VB6---";
         public static readonly string ITEM_VBNET = "---Item VBNet---";
