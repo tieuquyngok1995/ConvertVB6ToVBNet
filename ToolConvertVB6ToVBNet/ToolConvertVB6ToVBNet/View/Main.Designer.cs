@@ -116,7 +116,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 17);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Ver: 2.0";
+            this.label3.Text = "Ver: 2.1";
             // 
             // panelTop
             // 

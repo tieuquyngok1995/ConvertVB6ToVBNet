@@ -6,6 +6,7 @@ namespace ToolConvertVB6ToVBNet.Utils
     public static class CONST
     {
         public static string FILE_PATH = AppContext.BaseDirectory + @"\Setting.bin";
+        public static string[] STRING_SEPARATORS = new string[] {"\r\n"};
 
         #region Char 
         public static readonly char CHAR_QUOTATION_MARKS = '"';
@@ -30,11 +31,13 @@ namespace ToolConvertVB6ToVBNet.Utils
 
         #region String 
         public static readonly string STR_VER_BAR = "|";
+        public static readonly string STR_ROUND_BRAC = "(";
         public static readonly string STR_EQUALS = "=";
         public static readonly string STR_DOT = ".";
         public static readonly string STR_UNDERSCORE = "_";
         public static readonly string STR_QUOTATION_MARKS = "\"";
         public static readonly string STR_QUOTATION_MARKS_CHANGE = "[-]";
+        public static readonly string STR_NEW_LINE = "\r\n";
 
         public static readonly string STR_BK = "Backup";
         public static readonly string STR_INDEX = "Index";
@@ -57,6 +60,14 @@ namespace ToolConvertVB6ToVBNet.Utils
         public static readonly string STR_VBNET_SYS_TEXTBOXARR = "Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray";
         public static readonly string STR_VBNET_SYS_COMPONENT = "System.ComponentModel.ISupportInitialize";
         public static readonly string STR_VBNET_UPGRADE_WARNING= "UPGRADE_WARNING: Couldn't resolve default property of object";
+        public static readonly string STR_VBNET_STRICT_OFF = "Option Strict Off";
+        public static readonly string STR_VBNET_EXPLICIT_ON = "Option Explicit On";
+        public static readonly string STR_VBNET_PUBLIC_SUB = "Public Sub";
+        public static readonly string STR_VBNET_PRIVATE_SUB = "Private Sub";
+        public static readonly string STR_VBNET_PUBLIC_FUNC = "Public Function";
+        public static readonly string STR_VBNET_PRIVATE_FUNC = "Private Function";
+        public static readonly string STR_VBNET_END_FUNC = "End Function";
+        public static readonly string STR_VBNET_END_SUB = "End Sub";
         #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace ToolConvertVB6ToVBNet
     {
         private int mode;
 
-        private string strFullPathSelect;
+        private string fullPathSelect;
 
         private TreeNode treeNode;
         private SettingModel objSetting;
@@ -142,14 +142,14 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="e"></param>
         private void btnReload_Click(object sender, EventArgs e)
         {
-            if (strFullPathSelect.Equals(txtDirectoryPath.Text))
+            if (fullPathSelect.Equals(txtDirectoryPath.Text))
             {
                 // Load Directory
                 LoadDirectory();
             }
-            else if (treeNode != null && Directory.Exists(strFullPathSelect))
+            else if (treeNode != null && Directory.Exists(fullPathSelect))
             {
-                string dir = strFullPathSelect;
+                string dir = fullPathSelect;
 
                 // Setting Inital Value of Progress Bar
                 progressBarLoadDir.Value = 0;
@@ -174,9 +174,9 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="e"></param>
         private void treeViewDir_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            strFullPathSelect = e.Node.Tag.ToString();
+            fullPathSelect = e.Node.Tag.ToString();
 
-            if (Directory.Exists(strFullPathSelect))
+            if (Directory.Exists(fullPathSelect))
             {
                 txtFolderPath.Text = e.Node.Text;
                 treeNode = e.Node;
@@ -335,7 +335,7 @@ namespace ToolConvertVB6ToVBNet
                 else if (row.Equals(CONST.ITEM_VBNET_RE)) { mode = 3; continue; }
                 else if (row.Equals(CONST.FUNC_VBNET)) { mode = 4; continue; }
 
-                string[] arrRow = row.Split(CONST.CHAR_EQUALS);
+                string[] arrRow = row.Split(CONST.CHAR_VER_BAR);
                 if (mode == 0 && arrRow.Length == 2)
                 {
                     dicItemVB6.Add(arrRow[0], arrRow[1]);
@@ -374,15 +374,15 @@ namespace ToolConvertVB6ToVBNet
         {
             try
             {
-                if (!string.IsNullOrEmpty(strFullPathSelect))
+                if (!string.IsNullOrEmpty(fullPathSelect))
                 {
                     // Setting Inital Value of Progress Bar
                     progressBarLoadDir.Value = 0;
 
                     //Setting ProgressBar Maximum Value
-                    progressBarLoadDir.Maximum = Directory.GetFiles(strFullPathSelect, "*.*", SearchOption.AllDirectories).Length;
+                    progressBarLoadDir.Maximum = Directory.GetFiles(fullPathSelect, "*.*", SearchOption.AllDirectories).Length;
 
-                    string[] Files = Directory.GetFiles(strFullPathSelect, "*.*");
+                    string[] Files = Directory.GetFiles(fullPathSelect, "*.*");
                     foreach (string file in Files)
                     {
                         File.SetAttributes(file, FileAttributes.Normal);
@@ -435,7 +435,7 @@ namespace ToolConvertVB6ToVBNet
         {
             try
             {
-                if (!string.IsNullOrEmpty(strFullPathSelect))
+                if (!string.IsNullOrEmpty(fullPathSelect))
                 {
                     StringBuilder sbLog = new StringBuilder();
 
@@ -443,9 +443,9 @@ namespace ToolConvertVB6ToVBNet
                     progressBarLoadDir.Value = 0;
 
                     //Setting ProgressBar Maximum Value
-                    progressBarLoadDir.Maximum = Directory.GetFiles(strFullPathSelect, "*.*", SearchOption.AllDirectories).Length;
+                    progressBarLoadDir.Maximum = Directory.GetFiles(fullPathSelect, "*.*", SearchOption.AllDirectories).Length;
 
-                    string[] Files = Directory.GetFiles(strFullPathSelect, "*.*");
+                    string[] Files = Directory.GetFiles(fullPathSelect, "*.*");
                     foreach (string file in Files)
                     {
                         File.SetAttributes(file, FileAttributes.Normal);
@@ -456,7 +456,7 @@ namespace ToolConvertVB6ToVBNet
                         }
                         else if (file.LastIndexOf(CONST.VB_NET_VB) != -1)
                         {
-                            //readAndEditFileVBNet(file);
+                            readAndEditFileVBNet(file);
                         }
 
                         UpdateProgress();
@@ -495,7 +495,7 @@ namespace ToolConvertVB6ToVBNet
             {
                 string nameItem = string.Empty, nameItemBk = string.Empty, tag = string.Empty;
                 bool isBk = false;
-                int index = 0;
+                int index = -1;
 
                 List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
                 List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVBNetBk.Keys);
@@ -559,7 +559,7 @@ namespace ToolConvertVB6ToVBNet
                         nameItem = string.Empty;
                         tag = string.Empty;
                         isBk = false;
-                        index = 0;
+                        index = -1;
                     }
 
                     // comment obj OCX
@@ -585,6 +585,11 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="path"></param>
         private void readAndEditFileVBNetDesign(string path)
         {
+            string lastName = string.Empty;
+
+            List<string> lstItem = new List<string>(objSetting.dicItemVBNet.Keys);
+            List<string> lstItemRe = new List<string>(objSetting.dicItemVBNetRemove.Keys);
+
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
             String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
@@ -597,10 +602,6 @@ namespace ToolConvertVB6ToVBNet
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite), Encoding.GetEncoding(932));
             try
             {
-                string lastName = string.Empty;
-
-                List<string> lstItem = new List<string>(objSetting.dicItemVBNet.Keys);
-                List<string> lstItemRe = new List<string>(objSetting.dicItemVBNetRemove.Keys);
                 for (int i = 0; i < rows.Length; i++)
                 {
                     string row = rows[i];
@@ -624,7 +625,7 @@ namespace ToolConvertVB6ToVBNet
                         continue;
                     }
 
-                    if(row.Contains(CONST.STR_VBNET_W_EVENT) && row.Contains(CONST.STR_VBNET_SYS_TEXTBOXARR))
+                    if (row.Contains(CONST.STR_VBNET_W_EVENT) && row.Contains(CONST.STR_VBNET_SYS_TEXTBOXARR))
                     {
                         sw.WriteLine(String.Empty);
                         continue;
@@ -633,11 +634,18 @@ namespace ToolConvertVB6ToVBNet
                     // Remove item in dic item remove
                     if (row.Contains(CONST.STR_VBNET_ME))
                     {
-                        foreach (string itemRe in lstItemRe)
+                        foreach (string keyItemRe in lstItemRe)
                         {
-                            if (row.Contains(itemRe) && row.Contains(CONST.STR_DOT + objSetting.dicItemVBNetRemove[itemRe]))
+                            if (row.Contains(keyItemRe))
                             {
-                                row = string.Empty;
+                                foreach (string itemRe in objSetting.dicItemVBNetRemove[keyItemRe])
+                                {
+                                    if (row.Contains(CONST.STR_DOT + itemRe))
+                                    {
+                                        row = string.Empty;
+                                        break;
+                                    }
+                                }
                                 break;
                             }
                         }
@@ -650,7 +658,14 @@ namespace ToolConvertVB6ToVBNet
                         if (arrRow.Length >= 1 && !arrRow[1].Equals(lastName))
                         {
                             string nameCheck = lastName;
-                            if (nameCheck.LastIndexOf(CONST.STR_UNDERSCORE) > 0) nameCheck = nameCheck.Insert(nameCheck.LastIndexOf(CONST.STR_UNDERSCORE), CONST.STR_BK);
+                            if (nameCheck.LastIndexOf(CONST.STR_UNDERSCORE) > 0)
+                            {
+                                nameCheck = nameCheck.Insert(nameCheck.LastIndexOf(CONST.STR_UNDERSCORE), CONST.STR_BK);
+                            }
+                            else
+                            {
+                                nameCheck = nameCheck + CONST.STR_BK;
+                            }
 
                             if (arrRow[1].Equals(nameCheck) && !row.Contains(CONST.STR_TAG))
                             {
@@ -666,8 +681,8 @@ namespace ToolConvertVB6ToVBNet
                             }
                         }
 
-                        if (row.Contains(CONST.STR_BK) 
-                            && (row.Contains(CONST.STR_ADD) || row.Contains(CONST.STR_NEW) || 
+                        if (row.Contains(CONST.STR_BK)
+                            && (row.Contains(CONST.STR_ADD) || row.Contains(CONST.STR_NEW) ||
                                 row.Contains(CONST.STR_VBNET_SYS_COMPONENT) || row.Contains(CONST.STR_SET_INDEX)))
                         {
                             row = string.Empty;
@@ -692,7 +707,10 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="path"></param>
         private void readAndEditFileVBNet(string path)
         {
-            string log = string.Empty;
+            string logFunChange = string.Empty, logChange= string.Empty, nameFuc = string.Empty;
+            int countFunc = 0, lineFunc = 0;;
+
+            List<string> lstFunc = new List<string>(objSetting.dicFunVBNet.Keys);
 
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
@@ -707,13 +725,76 @@ namespace ToolConvertVB6ToVBNet
 
             try
             {
-                for (int i = 0; i < rows.Length; i++)
+                for (int line = 0; line < rows.Length; line++)
                 {
-                    string row = rows[i];
-                    if (row.Contains(CONST.STR_VBNET_UPGRADE_WARNING)) continue;
+                    string row = rows[line];
+                    if (row.Contains(CONST.STR_VBNET_UPGRADE_WARNING) || row.Contains(CONST.STR_VBNET_STRICT_OFF) ||
+                        row.Contains(CONST.STR_VBNET_EXPLICIT_ON)) continue;
+
+                    if (string.IsNullOrEmpty(row)) { }
+                    else if (row.Contains(CONST.STR_VBNET_PUBLIC_SUB))
+                    {
+                        nameFuc = row.Substring(0, row.IndexOf(CONST.STR_ROUND_BRAC)).Replace(CONST.STR_VBNET_PUBLIC_SUB, string.Empty);
+                        countFunc++; lineFunc = line;
+                    }
+                    else if (row.Contains(CONST.STR_VBNET_PRIVATE_SUB))
+                    {
+                        nameFuc = row.Substring(0, row.IndexOf(CONST.STR_ROUND_BRAC)).Replace(CONST.STR_VBNET_PRIVATE_SUB, string.Empty);
+                        countFunc++; lineFunc = line;
+                    }
+                    else if (row.Contains(CONST.STR_VBNET_PUBLIC_FUNC))
+                    {
+                        nameFuc = row.Substring(0, row.IndexOf(CONST.STR_ROUND_BRAC)).Replace(CONST.STR_VBNET_PUBLIC_FUNC, string.Empty);
+                        countFunc++; lineFunc = line;
+                    }
+                    else if (row.Contains(CONST.STR_VBNET_PRIVATE_FUNC))
+                    {
+                        nameFuc = row.Substring(0, row.IndexOf(CONST.STR_ROUND_BRAC)).Replace(CONST.STR_VBNET_PRIVATE_FUNC, string.Empty);
+                        countFunc++; lineFunc = line;
+                    }
+                    else if (row.Trim().Equals(CONST.STR_VBNET_END_FUNC) || row.Trim().Equals(CONST.STR_VBNET_END_SUB))
+                    {
+                        logFunChange += logChange;
+                        logChange = string.Empty;
+                        nameFuc = string.Empty;
+                    }
+                    else
+                    {
+                        foreach(string item in lstFunc)
+                        {
+                            if (row.Contains(item))
+                            {
+                                string itemChange = objSetting.dicFunVBNet[item];
+
+                                if (string.IsNullOrEmpty(logChange))
+                                {
+                                    logChange = CUtils.createChangeLog(nameFuc.Trim(), lineFunc);
+                                }
+                                logChange += CUtils.createChangeFuncLog(line, item, itemChange);
+                                row.Replace(item, itemChange);
+                                break;
+                            }
+                        }
+                    }
 
                     sw.WriteLine(row);
                 }
+                sw.Close();
+
+                path = path.Replace(CONST.VB_NET_VB, CONST.FILE_LOG);
+
+                if (File.Exists(path)) File.Delete(path);
+
+                // Write file log
+                sw = new StreamWriter(File.Open(path, FileMode.Create), Encoding.GetEncoding(932));
+
+                string logNote = CUtils.createNoteLog(path, countFunc, logFunChange);
+                rows = logNote.Split(CONST.STRING_SEPARATORS, StringSplitOptions.None);
+                foreach (string row in rows)
+                {
+                    sw.WriteLine(row);
+                }
+
                 sw.Close();
             }
             catch (Exception e)
@@ -722,11 +803,6 @@ namespace ToolConvertVB6ToVBNet
 
                 sw.Close();
             }
-        }
-
-        private void writeLog(string path)
-        {
-            path = path.Replace(CONST.VB_NET_VB, CONST.FILE_LOG);
         }
 
         /// <summary>
