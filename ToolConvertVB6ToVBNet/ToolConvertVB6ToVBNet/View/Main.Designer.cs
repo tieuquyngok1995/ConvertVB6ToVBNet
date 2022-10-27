@@ -192,12 +192,12 @@
             // 
             // txtDirectoryPath
             // 
-            this.txtDirectoryPath.Enabled = false;
             this.txtDirectoryPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDirectoryPath.Location = new System.Drawing.Point(130, 34);
             this.txtDirectoryPath.Name = "txtDirectoryPath";
             this.txtDirectoryPath.Size = new System.Drawing.Size(195, 26);
             this.txtDirectoryPath.TabIndex = 1;
+            this.txtDirectoryPath.Click += new System.EventHandler(this.txtDirectoryPath_Click);
             // 
             // btnDirectoryPath
             // 

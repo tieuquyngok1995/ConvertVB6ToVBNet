@@ -114,6 +114,16 @@ namespace ToolConvertVB6ToVBNet
         }
 
         /// <summary>
+        /// Text box directory path click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtDirectoryPath_Click(object sender, EventArgs e)
+        {
+            txtDirectoryPath.SelectAll();
+        }
+
+        /// <summary>
         /// Button Select Folder Click Event
         /// </summary>
         /// <param name="sender"></param>
@@ -563,7 +573,7 @@ namespace ToolConvertVB6ToVBNet
                     }
 
                     // comment obj OCX
-                    if (mode == 1 && row.LastIndexOf(CONST.OBJ_OCX) != -1)
+                    if (mode == 1 && (row.LastIndexOf(CONST.OBJ_OCX) != -1 || row.LastIndexOf(CONST.OBJ_OIP11) != -1))
                     {
                         row = "\'" + row;
                     }
@@ -689,6 +699,19 @@ namespace ToolConvertVB6ToVBNet
                         }
                     }
 
+                    // Check and add item imeMode
+                    if (row.Contains(CONST.STR_VBNET_ME) && row.Contains(CONST.STR_IME_MODE))
+                    {
+                        if (row.Contains(CONST.STR_IME_MODE_HIRAGANE))
+                        {
+                            row += CONST.STR_NEW_LINE + CUtils.addPropertyVBNetDesign(lastName, CONST.STR_CHK_ASCII_KANJI);
+                        }
+                        else if (row.Contains(CONST.STR_IME_MODE_KATAKANA) || row.Contains(CONST.STR_IME_MODE_KATAKANA_HF))
+                        {
+                            row += CONST.STR_NEW_LINE + CUtils.addPropertyVBNetDesign(lastName, CONST.STR_CHK_ASCII_KANA);
+                        }
+                    }
+
                     sw.WriteLine(row);
                 }
                 sw.Close();
@@ -707,8 +730,8 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="path"></param>
         private void readAndEditFileVBNet(string path)
         {
-            string logFunChange = string.Empty, logChange= string.Empty, nameFuc = string.Empty;
-            int countFunc = 0, lineFunc = 0;;
+            string logFunChange = string.Empty, logChange = string.Empty, nameFuc = string.Empty;
+            int countFunc = 0, lineFunc = 0; ;
 
             List<string> lstFunc = new List<string>(objSetting.dicFunVBNet.Keys);
 
@@ -760,7 +783,7 @@ namespace ToolConvertVB6ToVBNet
                     }
                     else
                     {
-                        foreach(string item in lstFunc)
+                        foreach (string item in lstFunc)
                         {
                             if (row.Contains(item))
                             {
@@ -800,7 +823,6 @@ namespace ToolConvertVB6ToVBNet
             catch (Exception e)
             {
                 MessageBox.Show("Read and Edit file VBNet is Exception: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                 sw.Close();
             }
         }
@@ -826,6 +848,5 @@ namespace ToolConvertVB6ToVBNet
             return result.Remove(result.Length - 2, 2);
         }
         #endregion
-
     }
 }
