@@ -81,6 +81,15 @@ namespace ToolConvertVB6ToVBNet
             }
         }
 
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("*********** Tool Convert VB6 to VB.NET " + lblVer.Text + " ***********\r\n" +
+                "  * Tool chỉ hỗ trợ giảm bớt thao tác khi convert, vẫn có sai sót vui lòng kiểm tra lại sau khi sử dụng.\r\n" +
+                "  * Mọi vấn đề thắc mắc cũng như góp ý phản hồi bug phát sinh vui lòng liên hệ team 3.2.\r\n" +
+                "*********** Xin cảm ơn! ***********", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
         /// <summary>
         /// Radio Convert Check
         /// </summary>

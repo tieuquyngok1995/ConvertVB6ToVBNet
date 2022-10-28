@@ -35,7 +35,7 @@
             this.panelFooter = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblVer = new System.Windows.Forms.Label();
             this.panelTop = new System.Windows.Forms.Panel();
             this.btnReload = new System.Windows.Forms.Button();
             this.rbChange = new System.Windows.Forms.RadioButton();
@@ -54,6 +54,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.abourtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panelFooter.SuspendLayout();
@@ -74,7 +75,7 @@
             // 
             this.panelFooter.Controls.Add(this.label5);
             this.panelFooter.Controls.Add(this.label4);
-            this.panelFooter.Controls.Add(this.label3);
+            this.panelFooter.Controls.Add(this.lblVer);
             this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelFooter.Location = new System.Drawing.Point(0, 540);
             this.panelFooter.Name = "panelFooter";
@@ -105,18 +106,18 @@
             this.label4.TabIndex = 4;
             this.label4.Text = "|";
             // 
-            // label3
+            // lblVer
             // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(341, 0);
-            this.label3.Margin = new System.Windows.Forms.Padding(0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(58, 17);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Ver: 2.1";
+            this.lblVer.AutoSize = true;
+            this.lblVer.Dock = System.Windows.Forms.DockStyle.Right;
+            this.lblVer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblVer.ForeColor = System.Drawing.Color.Black;
+            this.lblVer.Location = new System.Drawing.Point(341, 0);
+            this.lblVer.Margin = new System.Windows.Forms.Padding(0);
+            this.lblVer.Name = "lblVer";
+            this.lblVer.Size = new System.Drawing.Size(58, 17);
+            this.lblVer.TabIndex = 1;
+            this.lblVer.Text = "Ver: 2.1";
             // 
             // panelTop
             // 
@@ -176,9 +177,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(6, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(113, 18);
+            this.label1.Size = new System.Drawing.Size(122, 18);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Select Directory";
+            this.label1.Text = "Select Folder Src";
             // 
             // label6
             // 
@@ -251,18 +252,18 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(6, 7);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 18);
+            this.label2.Size = new System.Drawing.Size(124, 18);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Select Folder";
+            this.label2.Text = "Select Folder Edit";
             // 
             // txtFolderPath
             // 
             this.txtFolderPath.Enabled = false;
             this.txtFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFolderPath.Location = new System.Drawing.Point(109, 3);
+            this.txtFolderPath.Location = new System.Drawing.Point(136, 3);
             this.txtFolderPath.Name = "txtFolderPath";
             this.txtFolderPath.ReadOnly = true;
-            this.txtFolderPath.Size = new System.Drawing.Size(183, 26);
+            this.txtFolderPath.Size = new System.Drawing.Size(156, 26);
             this.txtFolderPath.TabIndex = 6;
             // 
             // btnConvert
@@ -288,7 +289,8 @@
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1});
+            this.toolStripMenuItem1,
+            this.abourtToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(399, 25);
@@ -310,6 +312,13 @@
             this.settingToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.settingToolStripMenuItem.Text = "Setting";
             this.settingToolStripMenuItem.Click += new System.EventHandler(this.settingToolStripMenuItem_Click);
+            // 
+            // abourtToolStripMenuItem
+            // 
+            this.abourtToolStripMenuItem.Name = "abourtToolStripMenuItem";
+            this.abourtToolStripMenuItem.Size = new System.Drawing.Size(52, 21);
+            this.abourtToolStripMenuItem.Text = "About";
+            this.abourtToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // openFileDialog
             // 
@@ -355,7 +364,7 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.ImageList imageListTree;
         private System.Windows.Forms.Panel panelFooter;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblVer;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel panelTop;
@@ -378,6 +387,7 @@
         private System.Windows.Forms.Button btnReload;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.ToolStripMenuItem abourtToolStripMenuItem;
     }
 }
 
