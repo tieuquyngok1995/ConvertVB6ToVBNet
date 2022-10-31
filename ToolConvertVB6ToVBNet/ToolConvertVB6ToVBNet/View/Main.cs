@@ -927,9 +927,9 @@ namespace ToolConvertVB6ToVBNet
                 if (File.Exists(path)) File.Delete(path);
 
                 // Write file log
-                sw = new StreamWriter(File.Open(pathFile, FileMode.Create), Encoding.GetEncoding(932));
+                sw = new StreamWriter(File.Open(path, FileMode.Create), Encoding.GetEncoding(932));
 
-                string logNote = CUtils.createNoteLog(path, countFunc, logFunChange);
+                string logNote = CUtils.createNoteLog(pathFile, countFunc, logFunChange);
                 rows = logNote.Split(CONST.STRING_SEPARATORS, StringSplitOptions.None);
                 foreach (string row in rows)
                 {
