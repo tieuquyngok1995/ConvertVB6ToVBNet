@@ -117,7 +117,7 @@
             this.lblVer.Name = "lblVer";
             this.lblVer.Size = new System.Drawing.Size(58, 17);
             this.lblVer.TabIndex = 1;
-            this.lblVer.Text = "Ver: 2.1";
+            this.lblVer.Text = "Ver: 2.2";
             // 
             // panelTop
             // 
@@ -199,6 +199,7 @@
             this.txtDirectoryPath.Size = new System.Drawing.Size(195, 26);
             this.txtDirectoryPath.TabIndex = 1;
             this.txtDirectoryPath.Click += new System.EventHandler(this.txtDirectoryPath_Click);
+            this.txtDirectoryPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDirectoryPath_KeyDown);
             // 
             // btnDirectoryPath
             // 
@@ -252,9 +253,9 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(6, 7);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(124, 18);
+            this.label2.Size = new System.Drawing.Size(122, 18);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Select Folder Edit";
+            this.label2.Text = "Select File/Folder";
             // 
             // txtFolderPath
             // 

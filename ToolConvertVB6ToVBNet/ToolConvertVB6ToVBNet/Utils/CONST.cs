@@ -26,8 +26,13 @@ namespace ToolConvertVB6ToVBNet.Utils
         public static readonly string OBJ_OIP11 = "oip11.tlb";
 
         public static readonly string VB_NET_DESIGN = ".Designer.vb";
+        public static readonly string VB_NET_DESIGN_BK = ".Designer.vb-bk";
         public static readonly string VB_NET_VB = ".vb";
+        public static readonly string VB_NET_VB_BK = ".vb-bk";
         public static readonly string FILE_LOG = ".log";
+
+        public static readonly string FILE_ASSEMBLY = "AssemblyInfo.vb";
+
         #endregion
 
         #region String 

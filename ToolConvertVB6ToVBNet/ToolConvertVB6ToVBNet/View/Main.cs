@@ -15,6 +15,7 @@ namespace ToolConvertVB6ToVBNet
     public partial class Main : Form
     {
         private int mode;
+        private int numFuncCount;
 
         private string fullPathSelect;
 
@@ -81,7 +82,11 @@ namespace ToolConvertVB6ToVBNet
             }
         }
 
-
+        /// <summary>
+        /// Info tool
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("*********** Tool Convert VB6 to VB.NET " + lblVer.Text + " ***********\r\n" +
@@ -133,6 +138,23 @@ namespace ToolConvertVB6ToVBNet
         }
 
         /// <summary>
+        /// Text box directory paste value
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtDirectoryPath_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+            {
+                if (!string.IsNullOrEmpty(txtDirectoryPath.Text) && Directory.Exists(txtDirectoryPath.Text))
+                {
+                    // Load Directory
+                    LoadDirectory();
+                }
+            }
+        }
+
+        /// <summary>
         /// Button Select Folder Click Event
         /// </summary>
         /// <param name="sender"></param>
@@ -179,7 +201,6 @@ namespace ToolConvertVB6ToVBNet
                 progressBarLoadDir.Maximum = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Length +
                     Directory.GetDirectories(dir, "**", SearchOption.AllDirectories).Length;
 
-
                 LoadFiles(dir, treeNode);
 
                 LoadSubDirectories(dir, treeNode);
@@ -195,7 +216,7 @@ namespace ToolConvertVB6ToVBNet
         {
             fullPathSelect = e.Node.Tag.ToString();
 
-            if (Directory.Exists(fullPathSelect))
+            if (Directory.Exists(fullPathSelect) || File.Exists(fullPathSelect))
             {
                 txtFolderPath.Text = e.Node.Text;
                 treeNode = e.Node;
@@ -221,9 +242,6 @@ namespace ToolConvertVB6ToVBNet
             {
                 editVBNet();
             }
-
-            MessageBox.Show("Convert is done!!!\r\nPlease check the content convert", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
         }
         #endregion
 
@@ -393,13 +411,29 @@ namespace ToolConvertVB6ToVBNet
         {
             try
             {
-                if (!string.IsNullOrEmpty(fullPathSelect))
+                if (!string.IsNullOrEmpty(fullPathSelect) && File.Exists(fullPathSelect))
                 {
-                    // Setting Inital Value of Progress Bar
-                    progressBarLoadDir.Value = 0;
+                    if (fullPathSelect.LastIndexOf(CONST.VB_FRM) != -1)
+                    {
+                        // Set  value progress bar
+                        setProgressBar(false);
 
-                    //Setting ProgressBar Maximum Value
-                    progressBarLoadDir.Maximum = Directory.GetFiles(fullPathSelect, "*.*", SearchOption.AllDirectories).Length;
+                        readAndEditFileVB6(fullPathSelect);
+
+                        UpdateProgress();
+
+                        MessageBox.Show("Convert is done!!!\r\n" +
+                            "The total number of functions in the " + Path.GetFileName(fullPathSelect) + " file is " + numFuncCount, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        numFuncCount = 0;
+                    } else
+                    {
+                        MessageBox.Show("File format incorrectly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else if (!string.IsNullOrEmpty(fullPathSelect) && Directory.Exists(fullPathSelect))
+                {
+                    // Set  value progress bar
+                    setProgressBar(true);
 
                     string[] Files = Directory.GetFiles(fullPathSelect, "*.*");
                     foreach (string file in Files)
@@ -407,34 +441,15 @@ namespace ToolConvertVB6ToVBNet
                         File.SetAttributes(file, FileAttributes.Normal);
 
                         string fileBk = String.Empty;
-                        if (file.LastIndexOf(CONST.VB_FRM) != -1 && file.LastIndexOf(CONST.VB_FRM_BK) == -1)
-                        {
-                            fileBk = file.Replace(CONST.VB_FRM, CONST.VB_FRM_BK);
-                            if (File.Exists(fileBk))
-                            {
-                                File.SetAttributes(fileBk, FileAttributes.Normal);
-                                File.Delete(fileBk);
-                            }
-                            File.Copy(file, fileBk);
 
-                            readAndEditFileVB6(file, 0);
-                        }
-                        if (file.LastIndexOf(CONST.VB_VBP) != -1 && file.LastIndexOf(CONST.VB_VBP) == -1)
-                        {
-                            fileBk = file.Replace(CONST.VB_VBP, CONST.VB_VBP_BK);
-                            if (File.Exists(fileBk))
-                            {
-                                File.SetAttributes(fileBk, FileAttributes.Normal);
-                                File.Delete(fileBk);
-                            }
-                            File.Copy(file, fileBk);
+                        readAndEditFileVB6(file);
 
-                            readAndEditFileVB6(file, 1);
-                        }
                         UpdateProgress();
                     }
 
                     progressBarLoadDir.Value = progressBarLoadDir.Maximum;
+
+                    MessageBox.Show("Convert is done!!!\r\nPlease check the content convert", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (IOException io)
@@ -454,15 +469,36 @@ namespace ToolConvertVB6ToVBNet
         {
             try
             {
-                if (!string.IsNullOrEmpty(fullPathSelect))
+                if (!string.IsNullOrEmpty(fullPathSelect) && File.Exists(fullPathSelect))
                 {
-                    StringBuilder sbLog = new StringBuilder();
+                    // Set  value progress bar
+                    setProgressBar(false);
 
-                    // Setting Inital Value of Progress Bar
-                    progressBarLoadDir.Value = 0;
+                    File.SetAttributes(fullPathSelect, FileAttributes.Normal);
 
-                    //Setting ProgressBar Maximum Value
-                    progressBarLoadDir.Maximum = Directory.GetFiles(fullPathSelect, "*.*", SearchOption.AllDirectories).Length;
+                    if (fullPathSelect.LastIndexOf(CONST.VB_NET_DESIGN) != -1)
+                    {
+                        readAndEditFileVBNetDesign(fullPathSelect);
+                    }
+                    else if (fullPathSelect.LastIndexOf(CONST.VB_NET_VB) != -1)
+                    {
+                        readAndEditFileVBNet(fullPathSelect);
+                    } else
+                    {
+                        UpdateProgress();
+
+                        MessageBox.Show("File format incorrectly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    UpdateProgress();
+
+                    MessageBox.Show("Convert is done!!!\r\nPlease check the content convert", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else if (!string.IsNullOrEmpty(fullPathSelect) && Directory.Exists(fullPathSelect))
+                {
+                    // Set  value progress bar
+                    setProgressBar(true);
 
                     string[] Files = Directory.GetFiles(fullPathSelect, "*.*");
                     foreach (string file in Files)
@@ -482,6 +518,8 @@ namespace ToolConvertVB6ToVBNet
                     }
 
                     progressBarLoadDir.Value = progressBarLoadDir.Maximum;
+
+                    MessageBox.Show("Convert is done!!!\r\nPlease check the content convert", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (IOException io)
@@ -498,13 +536,49 @@ namespace ToolConvertVB6ToVBNet
         /// Read and edit file VB6 From
         /// </summary>
         /// <param name="path">path file</param>
-        /// <param name="mode">mode = 0 change file, mode = 1 comment obj .ocx</param>
-        private void readAndEditFileVB6(string path, int mode)
+        /// <param name="modeFile">mode = 0 change file, mode = 1 comment obj .ocx</param>
+        private void readAndEditFileVB6(string path)
         {
+            string nameItem = string.Empty, nameItemBk = string.Empty, tag = string.Empty;
+            bool isBk = false, isObjOCX = false;
+            int index = -1;
+
+            List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
+            List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVBNetBk.Keys);
+
+            if (path.LastIndexOf(CONST.VB_FRM) != -1 && path.LastIndexOf(CONST.VB_FRM_BK) == -1)
+            {
+                string fileBk = path.Replace(CONST.VB_FRM, CONST.VB_FRM_BK);
+                if (File.Exists(fileBk))
+                {
+                    File.SetAttributes(fileBk, FileAttributes.Normal);
+                    File.Delete(fileBk);
+                }
+                File.Copy(path, fileBk);
+            }
+            else if (path.LastIndexOf(CONST.VB_VBP) != -1 && path.LastIndexOf(CONST.VB_VBP) == -1)
+            {
+                string fileBk = path.Replace(CONST.VB_VBP, CONST.VB_VBP_BK);
+                if (File.Exists(fileBk))
+                {
+                    File.SetAttributes(fileBk, FileAttributes.Normal);
+                    File.Delete(fileBk);
+                }
+                File.Copy(path, fileBk);
+                isObjOCX = true;
+            }
+            else
+            {
+                return;
+            }
+
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
             String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
             sr.Close();
+
+            // Clear file
+            File.WriteAllText(path, String.Empty);
 
             // Write file
             StreamWriter sw = new StreamWriter(
@@ -512,14 +586,6 @@ namespace ToolConvertVB6ToVBNet
 
             try
             {
-                string nameItem = string.Empty, nameItemBk = string.Empty, tag = string.Empty;
-                bool isBk = false;
-                int index = -1;
-
-                List<string> lstItem = new List<string>(objSetting.dicItemVB6.Keys);
-                List<string> lstKeyItemBk = new List<string>(objSetting.dicItemVBNetBk.Keys);
-                List<string> lstItemBk = new List<string>();
-
                 for (int i = 0; i < rows.Length; i++)
                 {
                     string row = rows[i];
@@ -529,7 +595,7 @@ namespace ToolConvertVB6ToVBNet
                         // Change item to TextBox
                         foreach (string item in lstItem)
                         {
-                            if (mode == 0 && row.Contains(item))
+                            if (row.Contains(item))
                             {
                                 foreach (string itemBk in lstKeyItemBk)
                                 {
@@ -560,7 +626,7 @@ namespace ToolConvertVB6ToVBNet
                         }
 
                         string item = arrItem[0].Trim();
-                        lstItemBk = objSetting.dicItemVBNetBk[nameItemBk];
+                        List<string> lstItemBk = objSetting.dicItemVBNetBk[nameItemBk];
 
                         foreach (string itemBk in lstItemBk)
                         {
@@ -581,10 +647,18 @@ namespace ToolConvertVB6ToVBNet
                         index = -1;
                     }
 
-                    // comment obj OCX
-                    if (mode == 1 && (row.LastIndexOf(CONST.OBJ_OCX) != -1 || row.LastIndexOf(CONST.OBJ_OIP11) != -1))
+                    // Comment obj OCX
+                    if (isObjOCX && (row.LastIndexOf(CONST.OBJ_OCX) != -1 || row.LastIndexOf(CONST.OBJ_OIP11) != -1))
                     {
                         row = "\'" + row;
+                    }
+
+                    // Count Func
+                    if (string.IsNullOrEmpty(row)) { }
+                    else if (row.Contains(CONST.STR_VBNET_PUBLIC_SUB) || row.Contains(CONST.STR_VBNET_PRIVATE_SUB) ||
+                             row.Contains(CONST.STR_VBNET_PUBLIC_FUNC) || row.Contains(CONST.STR_VBNET_PRIVATE_FUNC))
+                    {
+                        numFuncCount++;
                     }
 
                     sw.WriteLine(row);
@@ -604,16 +678,33 @@ namespace ToolConvertVB6ToVBNet
         /// <param name="path"></param>
         private void readAndEditFileVBNetDesign(string path)
         {
-            string lastName = string.Empty;
+            string lastName = string.Empty, fileBk = String.Empty;
 
             List<string> lstItem = new List<string>(objSetting.dicItemVBNet.Keys);
             List<string> lstItemRe = new List<string>(objSetting.dicItemVBNetRemove.Keys);
+
+            // Edit and baclup file
+            if (path.LastIndexOf(CONST.VB_NET_DESIGN) != -1 && path.LastIndexOf(CONST.VB_NET_DESIGN_BK) == -1)
+            {
+                fileBk = path.Replace(CONST.VB_NET_DESIGN, CONST.VB_NET_DESIGN_BK);
+                if (File.Exists(fileBk))
+                {
+                    File.SetAttributes(fileBk, FileAttributes.Normal);
+                    File.Delete(fileBk);
+                }
+                File.Copy(path, fileBk);
+            }
+            else
+            {
+                return;
+            }
 
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
             String[] rows = Regex.Split(sr.ReadToEnd(), "\r\n");
             sr.Close();
 
+            // Clear file
             File.WriteAllText(path, String.Empty);
 
             // Write file
@@ -740,9 +831,26 @@ namespace ToolConvertVB6ToVBNet
         private void readAndEditFileVBNet(string path)
         {
             string logFunChange = string.Empty, logChange = string.Empty, nameFuc = string.Empty;
-            int countFunc = 0, lineFunc = 0; ;
+            string pathFile = string.Empty, fileBk = String.Empty;
+            int countFunc = 0, lineFunc = 0;
 
             List<string> lstFunc = new List<string>(objSetting.dicFunVBNet.Keys);
+
+            if (path.LastIndexOf(CONST.VB_NET_VB) != -1 && path.LastIndexOf(CONST.VB_NET_VB_BK) == -1 &&
+               !path.Contains(CONST.FILE_ASSEMBLY))
+            {
+                fileBk = path.Replace(CONST.VB_NET_VB, CONST.VB_NET_VB_BK);
+                if (File.Exists(fileBk))
+                {
+                    File.SetAttributes(fileBk, FileAttributes.Normal);
+                    File.Delete(fileBk);
+                }
+                File.Copy(path, fileBk);
+            }
+            else
+            {
+                return;
+            }
 
             // Read file
             StreamReader sr = new StreamReader(path, Encoding.GetEncoding(932));
@@ -813,12 +921,13 @@ namespace ToolConvertVB6ToVBNet
                 }
                 sw.Close();
 
+                pathFile = path;
                 path = path.Replace(CONST.VB_NET_VB, CONST.FILE_LOG);
 
                 if (File.Exists(path)) File.Delete(path);
 
                 // Write file log
-                sw = new StreamWriter(File.Open(path, FileMode.Create), Encoding.GetEncoding(932));
+                sw = new StreamWriter(File.Open(pathFile, FileMode.Create), Encoding.GetEncoding(932));
 
                 string logNote = CUtils.createNoteLog(path, countFunc, logFunChange);
                 rows = logNote.Split(CONST.STRING_SEPARATORS, StringSplitOptions.None);
@@ -856,6 +965,27 @@ namespace ToolConvertVB6ToVBNet
 
             return result.Remove(result.Length - 2, 2);
         }
+
+        private void setProgressBar(bool isFolder = true)
+        {
+            if (isFolder)
+            {
+                // Setting Inital Value of Progress Bar
+                progressBarLoadDir.Value = 0;
+
+                //Setting ProgressBar Maximum Value
+                progressBarLoadDir.Maximum = Directory.GetFiles(fullPathSelect, "*.*", SearchOption.AllDirectories).Length;
+            }
+            else
+            {
+                // Setting Inital Value of Progress Bar
+                progressBarLoadDir.Value = 0;
+
+                //Setting ProgressBar Maximum Value
+                progressBarLoadDir.Maximum = 1;
+            }
+        }
+
         #endregion
     }
 }
