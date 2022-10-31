@@ -199,6 +199,7 @@
             this.txtDirectoryPath.Size = new System.Drawing.Size(195, 26);
             this.txtDirectoryPath.TabIndex = 1;
             this.txtDirectoryPath.Click += new System.EventHandler(this.txtDirectoryPath_Click);
+            this.txtDirectoryPath.Enter += new System.EventHandler(this.txtDirectoryPath_Enter);
             this.txtDirectoryPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDirectoryPath_KeyDown);
             // 
             // btnDirectoryPath

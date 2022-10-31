@@ -138,6 +138,23 @@ namespace ToolConvertVB6ToVBNet
         }
 
         /// <summary>
+        /// Text box directory has enter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtDirectoryPath_Enter(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtDirectoryPath.Text) && Directory.Exists(txtDirectoryPath.Text))
+            {
+                objSetting.directoryPath = txtDirectoryPath.Text;
+                BinarySerialization.WriteToBinaryFile<SettingModel>(objSetting);
+
+                // Load Directory
+                LoadDirectory();
+            }
+        }
+
+        /// <summary>
         /// Text box directory paste value
         /// </summary>
         /// <param name="sender"></param>
@@ -146,8 +163,13 @@ namespace ToolConvertVB6ToVBNet
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
             {
-                if (!string.IsNullOrEmpty(txtDirectoryPath.Text) && Directory.Exists(txtDirectoryPath.Text))
+                string text = Clipboard.GetText();
+
+                if (!string.IsNullOrEmpty(text) && Directory.Exists(text))
                 {
+                    objSetting.directoryPath = text;
+                    BinarySerialization.WriteToBinaryFile<SettingModel>(objSetting);
+
                     // Load Directory
                     LoadDirectory();
                 }
@@ -425,7 +447,8 @@ namespace ToolConvertVB6ToVBNet
                         MessageBox.Show("Convert is done!!!\r\n" +
                             "The total number of functions in the " + Path.GetFileName(fullPathSelect) + " file is " + numFuncCount, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         numFuncCount = 0;
-                    } else
+                    }
+                    else
                     {
                         MessageBox.Show("File format incorrectly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
@@ -483,7 +506,8 @@ namespace ToolConvertVB6ToVBNet
                     else if (fullPathSelect.LastIndexOf(CONST.VB_NET_VB) != -1)
                     {
                         readAndEditFileVBNet(fullPathSelect);
-                    } else
+                    }
+                    else
                     {
                         UpdateProgress();
 
@@ -911,7 +935,7 @@ namespace ToolConvertVB6ToVBNet
                                     logChange = CUtils.createChangeLog(nameFuc.Trim(), lineFunc);
                                 }
                                 logChange += CUtils.createChangeFuncLog(line, item, itemChange);
-                                row.Replace(item, itemChange);
+                                row = row.Replace(item, itemChange);
                                 break;
                             }
                         }
