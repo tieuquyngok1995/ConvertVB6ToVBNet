@@ -759,12 +759,6 @@ namespace ToolConvertVB6ToVBNet
                         continue;
                     }
 
-                    if (row.Contains(CONST.STR_VBNET_W_EVENT) && row.Contains(CONST.STR_VBNET_SYS_TEXTBOXARR))
-                    {
-                        sw.WriteLine(String.Empty);
-                        continue;
-                    }
-
                     // Remove item in dic item remove
                     if (row.Contains(CONST.STR_VBNET_ME))
                     {

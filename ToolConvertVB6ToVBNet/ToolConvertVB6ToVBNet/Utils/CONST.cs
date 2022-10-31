@@ -69,7 +69,6 @@ namespace ToolConvertVB6ToVBNet.Utils
         public static readonly string STR_VBNET_W_EVENT = "Public WithEvents ";
         public static readonly string STR_VBNET_ME = "Me.";
         public static readonly string STR_VBNET_SYS_TEXTBOX = "System.Windows.Forms.TextBox";
-        public static readonly string STR_VBNET_SYS_TEXTBOXARR = "Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray";
         public static readonly string STR_VBNET_SYS_COMPONENT = "System.ComponentModel.ISupportInitialize";
         public static readonly string STR_VBNET_UPGRADE_WARNING = "UPGRADE_WARNING: Couldn't resolve default property of object";
         public static readonly string STR_VBNET_STRICT_OFF = "Option Strict Off";
